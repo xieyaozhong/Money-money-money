@@ -1,0 +1,11 @@
+{
+  "name": "Money³ AI 股票作戰室",
+  "short_name": "Money³",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#050810",
+  "theme_color": "#070b13",
+  "lang": "zh-Hant",
+  "description": "股票行情、技術、估值、法人、新聞、風險部位與機率情境分析工具。"
+}
