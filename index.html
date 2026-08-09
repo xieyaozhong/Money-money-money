@@ -3,131 +3,108 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#090d18" />
-  <title>Money³｜股票智慧分析儀</title>
-  <meta name="description" content="輸入股票代號，自動整合價格、技術指標、新聞情緒、台股估值、趨勢情境與風險部位。" />
+  <meta name="theme-color" content="#070b13" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Money³ AI 股票作戰室</title>
+  <meta name="description" content="輸入股票代號，自動整合行情、技術面、估值、台股法人籌碼、新聞情緒、風險部位與機率情境。" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="assets/styles.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
-  <style>
-    :root{--bg:#070a12;--panel:#0d1322;--panel2:#111a2d;--line:#23304b;--text:#edf4ff;--muted:#8798b8;--good:#53e6aa;--bad:#ff6f7d;--warn:#ffd166;--blue:#6ea8fe;--violet:#a78bfa;--radius:22px;--shadow:0 20px 60px rgba(0,0,0,.28)}
-    *{box-sizing:border-box} body{margin:0;background:radial-gradient(circle at 10% -10%,#15264b 0,transparent 32%),radial-gradient(circle at 90% 0,#251747 0,transparent 28%),var(--bg);color:var(--text);font-family:Inter,"Noto Sans TC",ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh}
-    button,input{font:inherit}.wrap{width:min(1180px,calc(100% - 28px));margin:auto;padding:34px 0 64px}.top{display:flex;justify-content:space-between;gap:18px;align-items:flex-end;margin-bottom:22px}.brand small{display:block;color:var(--blue);font-weight:800;letter-spacing:.16em;text-transform:uppercase}.brand h1{font-size:clamp(30px,5vw,52px);margin:6px 0 4px;line-height:1}.brand p{color:var(--muted);margin:0;max-width:720px;line-height:1.65}.badge{border:1px solid var(--line);background:rgba(17,26,45,.72);padding:9px 12px;border-radius:999px;color:#b9c7df;font-size:13px;white-space:nowrap}
-    .search{display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:10px;background:rgba(13,19,34,.9);border:1px solid var(--line);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow);position:sticky;top:10px;z-index:10;backdrop-filter:blur(14px)}.field label{display:block;font-size:11px;color:var(--muted);font-weight:800;letter-spacing:.08em;margin:0 0 6px 4px}.field input{width:100%;border:1px solid #2a3857;background:#080d18;color:var(--text);padding:13px 14px;border-radius:14px;outline:none}.field input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(110,168,254,.12)}.go{align-self:end;border:0;border-radius:14px;padding:14px 18px;min-width:120px;font-weight:900;cursor:pointer;background:linear-gradient(135deg,#6ea8fe,#a78bfa);color:#07101e;transition:.2s}.go:hover{transform:translateY(-1px)}.go:disabled{opacity:.55;cursor:not-allowed;transform:none}
-    .status{margin:14px 2px 0;color:var(--muted);min-height:22px;font-size:14px}.status.error{color:var(--bad)}.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px;margin-top:14px}.card{grid-column:span 3;background:linear-gradient(180deg,rgba(17,26,45,.94),rgba(10,15,27,.94));border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}.card.wide{grid-column:span 8}.card.side{grid-column:span 4}.card.full{grid-column:1/-1}.kicker{color:var(--muted);font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}.metric{font-size:clamp(25px,3vw,38px);font-weight:900;margin-top:7px;letter-spacing:-.03em}.sub{margin-top:6px;color:var(--muted);font-size:13px}.good{color:var(--good)}.bad{color:var(--bad)}.warn{color:var(--warn)}.blue{color:var(--blue)}
-    .section-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}.section-title h2{font-size:18px;margin:0}.section-title span{font-size:12px;color:var(--muted)}.chartbox{height:360px}.score{display:flex;align-items:center;gap:18px}.score-ring{width:108px;height:108px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--blue) var(--score,0%),#1b263d 0);position:relative;flex:0 0 auto}.score-ring:after{content:"";position:absolute;inset:10px;border-radius:50%;background:#0c1322}.score-ring b{position:relative;z-index:1;font-size:28px}.score-copy h3{margin:0 0 7px;font-size:24px}.score-copy p{margin:0;color:var(--muted);line-height:1.55;font-size:13px}
-    .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.mini{background:#090f1c;border:1px solid #1d2941;border-radius:15px;padding:12px}.mini span{display:block;color:var(--muted);font-size:11px}.mini b{display:block;margin-top:5px;font-size:15px}.table{width:100%;border-collapse:collapse;font-size:13px}.table th,.table td{text-align:right;padding:11px 8px;border-bottom:1px solid #1d2941}.table th:first-child,.table td:first-child{text-align:left}.table th{color:var(--muted);font-size:11px}.plan{display:grid;grid-template-columns:1.2fr .8fr;gap:12px}.plan-main{background:linear-gradient(135deg,rgba(83,230,170,.08),rgba(110,168,254,.07));border:1px solid #28425a;border-radius:18px;padding:16px}.plan-main h3{margin:4px 0 8px;font-size:22px}.plan-main p{margin:0;color:#b2c0d7;line-height:1.65}.steps{display:grid;gap:8px}.step{background:#090f1c;border:1px solid #1d2941;border-radius:14px;padding:12px}.step strong{font-size:13px}.step span{display:block;color:var(--muted);font-size:12px;margin-top:4px;line-height:1.5}
-    .news{display:grid;gap:9px}.news a{display:block;text-decoration:none;color:inherit;background:#090f1c;border:1px solid #1d2941;border-radius:14px;padding:12px;transition:.2s}.news a:hover{border-color:#38527d;transform:translateY(-1px)}.news b{font-size:13px;line-height:1.5}.news small{display:block;color:var(--muted);margin-top:6px}.sent{float:right;font-size:11px;padding:3px 7px;border-radius:999px;background:#17243b}.empty{color:var(--muted);font-size:13px;line-height:1.6}.method{font-size:12px;line-height:1.7;color:#889ab9}.method strong{color:#c8d5e9}.footer{margin-top:18px;color:#637493;font-size:11px;line-height:1.65;text-align:center}
-    @media(max-width:900px){.search{grid-template-columns:1fr 1fr}.field:first-child{grid-column:1/-1}.go{grid-column:1/-1}.card,.card.wide,.card.side{grid-column:1/-1}.top{align-items:flex-start;flex-direction:column}.metrics{grid-template-columns:repeat(2,1fr)}.plan{grid-template-columns:1fr}.chartbox{height:300px}}
-    @media(max-width:520px){.wrap{width:min(100% - 18px,1180px);padding-top:22px}.search{position:relative;top:0;grid-template-columns:1fr}.field:first-child,.go{grid-column:auto}.metrics{grid-template-columns:1fr 1fr}.score{align-items:flex-start}.score-ring{width:92px;height:92px}.card{padding:15px}}
-  </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="top">
-    <div class="brand"><small>Money · Money · Money</small><h1>股票智慧分析儀</h1><p>價格趨勢 × 技術指標 × 新聞情緒 × 台股估值 × 蒙地卡羅情境 × 風險部位。模型提供機率與條件，不把任何預測包裝成保證。</p></div>
-    <div class="badge">免 API Key · GitHub Pages 可用</div>
-  </div>
+  <div class="noise"></div>
+  <main class="shell">
+    <header class="hero">
+      <div>
+        <div class="eyebrow">MONEY · MONEY · MONEY</div>
+        <h1>AI 股票作戰室</h1>
+        <p>行情 × 技術 × 估值 × 法人籌碼 × 新聞 × 情境模擬 × 風險部位。輸出的是可驗證條件與機率，不是假裝精準知道未來。</p>
+      </div>
+      <div class="hero-badges">
+        <span>台股 / 美股</span><span>免 API Key</span><span>PWA</span>
+      </div>
+    </header>
 
-  <form class="search" id="form">
-    <div class="field"><label>股票代號</label><input id="symbol" value="2330" placeholder="例如 2330 / 2330.TW / AAPL" autocomplete="off" /></div>
-    <div class="field"><label>可投資資金</label><input id="capital" type="number" min="0" step="1000" value="100000" /></div>
-    <div class="field"><label>單筆風險 %</label><input id="risk" type="number" min="0.1" max="10" step="0.1" value="1" /></div>
-    <div class="field"><label>單股上限 %</label><input id="allocation" type="number" min="1" max="100" step="1" value="25" /></div>
-    <button class="go" id="go">開始分析</button>
-  </form>
-  <div class="status" id="status">輸入代號後開始。純數字會先嘗試台灣上市（.TW），失敗再嘗試上櫃（.TWO）。</div>
+    <form id="form" class="control-panel">
+      <label class="field wide"><span>股票代號</span><input id="symbol" value="2330" placeholder="2330 / 2330.TW / AAPL / NVDA" autocomplete="off" /></label>
+      <label class="field"><span>可投資資金</span><input id="capital" type="number" min="0" step="1000" value="100000" /></label>
+      <label class="field"><span>單筆風險 %</span><input id="risk" type="number" min="0.1" max="10" step="0.1" value="1" /></label>
+      <label class="field"><span>單股配置上限 %</span><input id="allocation" type="number" min="1" max="100" step="1" value="25" /></label>
+      <button id="go" class="primary">開始掃描</button>
+    </form>
+    <div id="status" class="status">純數字代號會先嘗試台灣上市（.TW），再嘗試上櫃（.TWO）。</div>
 
-  <section class="grid" id="dashboard" hidden>
-    <div class="card"><div class="kicker">最新價格</div><div class="metric" id="price">—</div><div class="sub" id="change">—</div></div>
-    <div class="card"><div class="kicker">趨勢評分</div><div class="metric" id="scoreValue">—</div><div class="sub" id="scoreLabel">—</div></div>
-    <div class="card"><div class="kicker">模型最大部位</div><div class="metric" id="positionValue">—</div><div class="sub" id="positionShares">—</div></div>
-    <div class="card"><div class="kicker">風險停損參考</div><div class="metric" id="stopValue">—</div><div class="sub" id="riskBudget">—</div></div>
+    <section id="dashboard" hidden>
+      <div class="decision-grid">
+        <article class="signal-card">
+          <div class="signal-orb" id="signalOrb"><span id="signalLight">●</span></div>
+          <div><div class="label">今日決策燈號</div><h2 id="signalTitle">—</h2><p id="signalText">—</p></div>
+        </article>
+        <article class="stat-card"><span>綜合分數</span><strong id="scoreValue">—</strong><small id="scoreLabel">—</small></article>
+        <article class="stat-card"><span>最新價格</span><strong id="price">—</strong><small id="change">—</small></article>
+        <article class="stat-card"><span>模型最大部位</span><strong id="positionValue">—</strong><small id="positionShares">—</small></article>
+        <article class="stat-card"><span>風險停損參考</span><strong id="stopValue">—</strong><small id="riskBudget">—</small></article>
+      </div>
 
-    <div class="card wide">
-      <div class="section-title"><h2 id="chartTitle">價格走勢</h2><span>日線 · EMA20 / EMA60</span></div>
-      <div class="chartbox"><canvas id="chart"></canvas></div>
-    </div>
-    <div class="card side">
-      <div class="section-title"><h2>綜合判讀</h2><span>0–100</span></div>
-      <div class="score"><div class="score-ring" id="scoreRing"><b id="ringNum">—</b></div><div class="score-copy"><h3 id="trendName">—</h3><p id="trendText">—</p></div></div>
-      <div class="metrics" style="margin-top:16px" id="technicalMetrics"></div>
-    </div>
+      <div class="grid main-grid">
+        <article class="panel chart-panel">
+          <div class="panel-head"><div><span class="overline">PRICE ACTION</span><h3 id="chartTitle">價格走勢</h3></div><div class="chips"><span>EMA20</span><span>EMA60</span><span>支撐 / 壓力</span></div></div>
+          <div class="chartbox"><canvas id="chart"></canvas></div>
+        </article>
+        <article class="panel score-panel">
+          <div class="panel-head"><div><span class="overline">MODEL SCORE</span><h3>多面向評分</h3></div></div>
+          <div class="score-ring" id="scoreRing"><div><b id="ringNum">—</b><small>/100</small></div></div>
+          <div id="factorBars" class="factor-bars"></div>
+        </article>
+      </div>
 
-    <div class="card wide">
-      <div class="section-title"><h2>進場策略</h2><span>條件式，不是保證買點</span></div>
-      <div class="plan"><div class="plan-main"><div class="kicker">目前模型建議</div><h3 id="timingTitle">—</h3><p id="timingText">—</p></div><div class="steps" id="buySteps"></div></div>
-    </div>
-    <div class="card side">
-      <div class="section-title"><h2>部位計算</h2><span>以風險為上限</span></div>
-      <div class="metrics" id="positionMetrics"></div>
-    </div>
+      <div class="grid two-col">
+        <article class="panel">
+          <div class="panel-head"><div><span class="overline">ENTRY PLAYBOOK</span><h3>最佳進場條件</h3></div><span id="timingBadge" class="pill">—</span></div>
+          <div class="callout"><h4 id="timingTitle">—</h4><p id="timingText">—</p></div>
+          <div id="buySteps" class="steps"></div>
+        </article>
+        <article class="panel">
+          <div class="panel-head"><div><span class="overline">POSITION SIZING</span><h3>資金配置</h3></div></div>
+          <div id="positionMetrics" class="mini-grid"></div>
+          <div class="allocation"><div><span>建議使用資金</span><b id="allocAmount">—</b></div><div class="allocation-bar"><i id="allocBar"></i></div></div>
+        </article>
+      </div>
 
-    <div class="card wide">
-      <div class="section-title"><h2>未來價格情境</h2><span>GBM 蒙地卡羅 · 不是目標價</span></div>
-      <table class="table"><thead><tr><th>期間</th><th>偏弱 P10</th><th>中位數 P50</th><th>偏強 P90</th><th>高於現價機率</th></tr></thead><tbody id="forecastRows"></tbody></table>
-    </div>
-    <div class="card side">
-      <div class="section-title"><h2>台股官方估值</h2><span>TWSE OpenAPI</span></div>
-      <div class="metrics" id="fundamentalMetrics"></div><div class="empty" id="fundamentalNote" style="margin-top:12px"></div>
-    </div>
+      <div class="grid two-col">
+        <article class="panel">
+          <div class="panel-head"><div><span class="overline">TECHNICAL</span><h3>技術面雷達</h3></div></div>
+          <div id="technicalMetrics" class="mini-grid technical"></div>
+        </article>
+        <article class="panel">
+          <div class="panel-head"><div><span class="overline">FUNDAMENTAL / FLOW</span><h3>估值與台股籌碼</h3></div></div>
+          <div id="fundamentalMetrics" class="mini-grid"></div>
+          <div id="flowMetrics" class="mini-grid flow-grid"></div>
+          <p id="fundamentalNote" class="note"></p>
+        </article>
+      </div>
 
-    <div class="card wide">
-      <div class="section-title"><h2>近期新聞情緒</h2><span id="newsScore">—</span></div>
-      <div class="news" id="newsList"></div>
-    </div>
-    <div class="card side">
-      <div class="section-title"><h2>模型依據</h2><span>可解釋</span></div>
-      <div class="method" id="methodText"></div>
-    </div>
-  </section>
-  <div class="footer">本工具是資料分析與風險管理輔助，不構成投資招攬、保證獲利或個別化財務顧問服務。市場可能因財報、政策、流動性、突發事件與資料延遲而偏離模型；請自行核對即時報價與重大訊息。</div>
-</div>
-<script>
-const $=id=>document.getElementById(id); let chart;
-const fmt=(n,d=2)=>Number.isFinite(n)?n.toLocaleString('zh-TW',{maximumFractionDigits:d,minimumFractionDigits:d}):'—';
-const pct=n=>Number.isFinite(n)?`${n>=0?'+':''}${(n*100).toFixed(2)}%`:'—';
-const clamp=(n,a,b)=>Math.min(b,Math.max(a,n));
-const avg=a=>a.length?a.reduce((s,x)=>s+x,0)/a.length:NaN;
-const std=a=>{const m=avg(a);return Math.sqrt(avg(a.map(x=>(x-m)**2)))};
-const last=a=>a[a.length-1];
-const quantile=(arr,q)=>{const a=[...arr].sort((x,y)=>x-y),p=(a.length-1)*q,b=Math.floor(p),r=p-b;return a[b+1]!==undefined?a[b]+r*(a[b+1]-a[b]):a[b]};
-function sma(arr,p){return arr.map((_,i)=>i<p-1?null:avg(arr.slice(i-p+1,i+1)))}
-function ema(arr,p){const k=2/(p+1);let e=arr[0];return arr.map((v,i)=>{e=i===0?v:v*k+e*(1-k);return e})}
-function rsi(arr,p=14){let gains=0,losses=0;for(let i=1;i<=p;i++){const d=arr[i]-arr[i-1];gains+=Math.max(d,0);losses+=Math.max(-d,0)}let ag=gains/p,al=losses/p,out=Array(p).fill(null);out.push(al===0?100:100-100/(1+ag/al));for(let i=p+1;i<arr.length;i++){const d=arr[i]-arr[i-1];ag=(ag*(p-1)+Math.max(d,0))/p;al=(al*(p-1)+Math.max(-d,0))/p;out.push(al===0?100:100-100/(1+ag/al))}return out}
-function atr(high,low,close,p=14){const tr=high.map((h,i)=>i===0?h-low[i]:Math.max(h-low[i],Math.abs(h-close[i-1]),Math.abs(low[i]-close[i-1])));return last(sma(tr,p).filter(Number.isFinite))}
-function regressionSlope(values){const y=values.map(Math.log),n=y.length,x=Array.from({length:n},(_,i)=>i),xm=avg(x),ym=avg(y);let num=0,den=0;for(let i=0;i<n;i++){num+=(x[i]-xm)*(y[i]-ym);den+=(x[i]-xm)**2}return num/den}
-function normal(){let u=0,v=0;while(!u)u=Math.random();while(!v)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
-function safeText(x){return String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
-async function fetchTextSmart(url){const routes=[url,`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,`https://cors.isomorphic-git.org/${url}`];let err;for(const u of routes){try{const r=await fetch(u,{cache:'no-store'});if(!r.ok)throw new Error(`HTTP ${r.status}`);return await r.text()}catch(e){err=e}}throw err||new Error('資料來源無回應')}
-async function fetchJsonSmart(url){return JSON.parse(await fetchTextSmart(url))}
-function tickerCandidates(raw){raw=raw.trim().toUpperCase();if(/^\d{4,6}$/.test(raw))return [`${raw}.TW`,`${raw}.TWO`];return [raw]}
-async function loadYahoo(raw){let lastErr;for(const symbol of tickerCandidates(raw)){try{const url=`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=2y&interval=1d&events=div%2Csplits&includeAdjustedClose=true`;
-const j=await fetchJsonSmart(url),r=j?.chart?.result?.[0];if(!r)throw new Error(j?.chart?.error?.description||'找不到代號');const q=r.indicators?.quote?.[0],adj=r.indicators?.adjclose?.[0]?.adjclose||q.close;const rows=r.timestamp.map((t,i)=>({date:new Date(t*1000),open:q.open[i],high:q.high[i],low:q.low[i],close:adj[i]??q.close[i],volume:q.volume[i]})).filter(x=>[x.close,x.high,x.low].every(Number.isFinite));if(rows.length<80)throw new Error('歷史資料不足');return {symbol,meta:r.meta,rows}}catch(e){lastErr=e}}throw lastErr||new Error('無法取得股價')}
-async function loadTwse(code){if(!/^\d{4,6}$/.test(code))return null;try{const [v,c]=await Promise.all([fetchJsonSmart('https://openapi.twse.com.tw/v1/exchangeReport/BWIBBU_ALL'),fetchJsonSmart('https://openapi.twse.com.tw/v1/opendata/t187ap03_L')]);const val=(Array.isArray(v)?v:[]).find(x=>String(x.Code||x['證券代號']||'').trim()===code);const company=(Array.isArray(c)?c:[]).find(x=>String(x['公司代號']||x['公司代碼']||x.Code||'').trim()===code);return {val,company}}catch(e){return null}}
-const POS=['上調','優於','成長','創高','獲利','利多','擴產','訂單','突破','回升','beat','upgrade','growth','record','profit','surge','rally','bullish','buyback','dividend'];
-const NEG=['下調','衰退','虧損','利空','調查','裁員','訴訟','下滑','跌破','風險','miss','downgrade','loss','probe','lawsuit','decline','warning','bearish','cut'];
-function sentiment(t){t=t.toLowerCase();let s=0;POS.forEach(w=>{if(t.includes(w.toLowerCase()))s++});NEG.forEach(w=>{if(t.includes(w.toLowerCase()))s--});return clamp(s,-2,2)}
-async function loadNews(symbol,name=''){try{const q=encodeURIComponent(`${symbol} ${name||''} 股票 OR stock`),url=`https://news.google.com/rss/search?q=${q}&hl=zh-TW&gl=TW&ceid=TW:zh-Hant`;const xml=await fetchTextSmart(url),doc=new DOMParser().parseFromString(xml,'text/xml');return [...doc.querySelectorAll('item')].slice(0,8).map(n=>({title:n.querySelector('title')?.textContent||'',link:n.querySelector('link')?.textContent||'#',date:n.querySelector('pubDate')?.textContent||'',score:sentiment(n.querySelector('title')?.textContent||'')}))}catch(e){return []}}
-function analyze(data,news,twse,capital,riskPct,maxAlloc){const rows=data.rows,close=rows.map(x=>x.close),high=rows.map(x=>x.high),low=rows.map(x=>x.low),vol=rows.map(x=>x.volume||0),dates=rows.map(x=>x.date);const e20=ema(close,20),e60=ema(close,60),r14=rsi(close),a14=atr(high,low,close),m12=ema(close,12),m26=ema(close,26),mac=m12.map((x,i)=>x-m26[i]),sig=ema(mac,9),s20=sma(close,20),sd20=std(close.slice(-20)),bbMid=last(s20),bbU=bbMid+2*sd20,bbL=bbMid-2*sd20,current=last(close),prev=close.at(-2),mom20=current/close.at(-21)-1,mom60=current/close.at(-61)-1,volRatio=(last(vol)||0)/(avg(vol.slice(-20))||1),support=Math.min(...low.slice(-20)),resistance=Math.max(...high.slice(-20)),logRet=close.slice(1).map((x,i)=>Math.log(x/close[i])).filter(Number.isFinite),dailyVol=std(logRet.slice(-252)),annualVol=dailyVol*Math.sqrt(252),slope=regressionSlope(close.slice(-60)),annualTrend=Math.exp(slope*252)-1,newsAvg=news.length?avg(news.map(x=>x.score))/2:0;
-let score=50;score+=current>last(e20)?7:-7;score+=last(e20)>last(e60)?10:-10;score+=last(mac)>last(sig)?8:-8;const rv=last(r14);score+=rv>=45&&rv<=68?7:rv>75?-8:rv<30?3:0;score+=mom20>0?7:-5;score+=mom60>0?7:-5;score+=(volRatio>1.1&&mom20>0)?4:0;score+=annualTrend>0?8:-8;score+=newsAvg*6;
-const val=twse?.val||{},pe=parseFloat(val.PEratio||val['本益比']),yieldPct=parseFloat(val.DividendYield||val['殖利率(%)']||val['殖利率％']),pb=parseFloat(val.PBratio||val['股價淨值比']);if(Number.isFinite(pe))score+=pe>0&&pe<30?3:pe>60?-2:0;if(Number.isFinite(yieldPct)&&yieldPct>=3)score+=2;if(Number.isFinite(pb)&&pb<3)score+=1;score=Math.round(clamp(score,0,100));
-const trend=score>=75?'強勢偏多':score>=62?'偏多':score>=48?'中性整理':score>=35?'偏空':'弱勢偏空';const trendDesc=score>=62?'趨勢結構偏正向，但仍應等價格條件成立後分批進場。':score>=48?'多空訊號混合，較適合等待突破或回踩確認。':'風險訊號較多，模型偏向先保留現金、等待結構改善。';
-const stopDist=clamp(Math.max(a14*2,current*.055),current*.04,current*.15),stop=Math.max(0,current-stopDist),riskBudget=capital*(riskPct/100),riskShares=Math.floor(riskBudget/stopDist),allocShares=Math.floor((capital*(maxAlloc/100))/current),shares=Math.max(0,Math.min(riskShares,allocShares)),amount=shares*current;
-const entryA=last(e20),entryB=Math.max(support,bbL),breakout=resistance+a14*.15;let timingTitle,timingText;if(score>=70&&current<=last(e20)*1.03){timingTitle='可進入分批觀察區';timingText=`下一個交易日開始觀察：若價格守住 EMA20（約 ${fmt(entryA)}）且收盤仍在其上，可先用小部位；若直接大漲，不追價，等待回踩。`;}else if(score>=55){timingTitle='等待確認再進場';timingText=`優先等回踩 EMA20 ±1.5%（約 ${fmt(entryA)}）不破，或放量突破近20日壓力 ${fmt(resistance)} 後再分批。條件未成立就不買。`;}else{timingTitle='暫緩進場';timingText=`目前訊號不足。至少等待價格重新站回 EMA20 ${fmt(entryA)}、MACD 改善，或形成新的20日高低結構後再評估；模型不建議只因跌深而猜底。`;}
-const mu=clamp(avg(logRet.slice(-126)),-.002,.002);const horizons=[5,20,60],forecasts=horizons.map(h=>{const sims=Array.from({length:3000},()=>current*Math.exp((mu-.5*dailyVol**2)*h+dailyVol*Math.sqrt(h)*normal()));return {h,p10:quantile(sims,.1),p50:quantile(sims,.5),p90:quantile(sims,.9),up:sims.filter(x=>x>current).length/sims.length}});
-return {rows,dates,close,e20,e60,current,prev,score,trend,trendDesc,rv,macd:last(mac),signal:last(sig),a14,mom20,mom60,volRatio,annualVol,annualTrend,bbU,bbL,support,resistance,newsAvg,pe,yieldPct,pb,shares,amount,stop,stopDist,riskBudget,entryA,entryB,breakout,timingTitle,timingText,forecasts};}
-function mini(label,value,cls=''){return `<div class="mini"><span>${label}</span><b class="${cls}">${value}</b></div>`}
-function drawChart(a,symbol){if(chart)chart.destroy();const n=180,labels=a.dates.slice(-n).map(d=>`${d.getMonth()+1}/${d.getDate()}`),price=a.close.slice(-n),e20=a.e20.slice(-n),e60=a.e60.slice(-n);chart=new Chart($('chart'),{type:'line',data:{labels,datasets:[{label:symbol,data:price,borderWidth:2,pointRadius:0,tension:.12},{label:'EMA20',data:e20,borderWidth:1.3,pointRadius:0,tension:.12},{label:'EMA60',data:e60,borderWidth:1.3,pointRadius:0,tension:.12}]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{labels:{color:'#9fb0ca',boxWidth:12}}},scales:{x:{ticks:{color:'#657797',maxTicksLimit:9},grid:{color:'rgba(70,90,120,.08)'}},y:{ticks:{color:'#657797'},grid:{color:'rgba(70,90,120,.12)'}}}}})}
-function render(data,a,news,twse,capital,riskPct,maxAlloc){$('dashboard').hidden=false;const curr=data.meta?.currency||'';$('price').textContent=`${fmt(a.current)} ${curr}`;$('change').innerHTML=`日變動 <span class="${a.current>=a.prev?'good':'bad'}">${pct(a.current/a.prev-1)}</span>`;$('scoreValue').textContent=`${a.score}/100`;$('scoreLabel').textContent=a.trend;$('positionValue').textContent=fmt(a.amount,0);$('positionShares').textContent=`約 ${a.shares.toLocaleString()} 股（依目前價格）`;$('stopValue').textContent=fmt(a.stop);$('riskBudget').textContent=`本次風險預算 ${fmt(a.riskBudget,0)}`;$('chartTitle').textContent=`${data.symbol} 價格走勢`;drawChart(a,data.symbol);
-$('scoreRing').style.setProperty('--score',`${a.score}%`);$('ringNum').textContent=a.score;$('trendName').textContent=a.trend;$('trendText').textContent=a.trendDesc;$('technicalMetrics').innerHTML=[mini('RSI 14',fmt(a.rv,1),a.rv>70?'warn':a.rv<35?'bad':''),mini('MACD',fmt(a.macd,2),a.macd>a.signal?'good':'bad'),mini('ATR 14',fmt(a.a14,2)),mini('20日動能',pct(a.mom20),a.mom20>=0?'good':'bad'),mini('60日動能',pct(a.mom60),a.mom60>=0?'good':'bad'),mini('年化波動',pct(a.annualVol),'warn')].join('');
-$('timingTitle').textContent=a.timingTitle;$('timingText').textContent=a.timingText;const s1=Math.round(a.shares*.4),s2=Math.round(a.shares*.3),s3=Math.max(0,a.shares-s1-s2);$('buySteps').innerHTML=`<div class="step"><strong>① 回踩確認 · 40%</strong><span>參考 ${fmt(a.entryA)} 附近，約 ${s1} 股。價格需守住 EMA20，不符合就跳過。</span></div><div class="step"><strong>② 深一階支撐 · 30%</strong><span>參考 ${fmt(a.entryB)} 附近，約 ${s2} 股。若跌破結構且量增，不攤平。</span></div><div class="step"><strong>③ 突破確認 · 30%</strong><span>參考 ${fmt(a.breakout)} 以上放量確認，約 ${s3} 股；避免無量假突破。</span></div>`;
-$('positionMetrics').innerHTML=[mini('總資金',fmt(capital,0)),mini('單筆風險',`${riskPct}%`),mini('單股上限',`${maxAlloc}%`),mini('停損距離',pct(a.stopDist/a.current),'warn'),mini('支撐20D',fmt(a.support)),mini('壓力20D',fmt(a.resistance))].join('');
-$('forecastRows').innerHTML=a.forecasts.map(f=>`<tr><td>${f.h} 交易日</td><td class="bad">${fmt(f.p10)}</td><td>${fmt(f.p50)}</td><td class="good">${fmt(f.p90)}</td><td>${(f.up*100).toFixed(1)}%</td></tr>`).join('');
-const comp=twse?.company||{},companyName=comp['公司簡稱']||comp['公司名稱']||data.meta?.shortName||'';$('fundamentalMetrics').innerHTML=[mini('本益比 PE',fmt(a.pe,2)),mini('殖利率',Number.isFinite(a.yieldPct)?`${fmt(a.yieldPct,2)}%`:'—'),mini('股價淨值比 PB',fmt(a.pb,2)),mini('公司',safeText(companyName)||'—')].join('');$('fundamentalNote').textContent=/\.TW$|\.TWO$/.test(data.symbol)?'台股估值資料優先讀取臺灣證券交易所公開 API；若欄位顯示「—」，代表該資料當下未提供、來源暫時無法跨網域讀取，或標的是上櫃股票。':'非台股目前以價格、技術面與新聞情緒為主；可再接入有授權的基本面 API 擴充。';
-$('newsScore').textContent=news.length?`情緒 ${a.newsAvg>0?'+':''}${a.newsAvg.toFixed(2)}`:'新聞來源暫無資料';$('newsList').innerHTML=news.length?news.map(n=>`<a href="${safeText(n.link)}" target="_blank" rel="noopener"><span class="sent ${n.score>0?'good':n.score<0?'bad':''}">${n.score>0?'偏正面':n.score<0?'偏負面':'中性'}</span><b>${safeText(n.title)}</b><small>${safeText(n.date?new Date(n.date).toLocaleString('zh-TW'):'')}</small></a>`).join(''):'<div class="empty">新聞 RSS 暫時無法讀取時，模型會自動把新聞權重降為 0，不會把缺失資料硬算成正面或負面。</div>';
-$('methodText').innerHTML=`<strong>趨勢：</strong> EMA20/60、20/60日動能與60日對數價格回歸。<br><strong>動能：</strong> RSI14、MACD(12,26,9)、量比。<br><strong>風險：</strong> ATR14、20日支撐/壓力與年化歷史波動。<br><strong>情境：</strong> 用近期日對數報酬估計漂移與波動，執行 3,000 次 GBM 蒙地卡羅，輸出 P10/P50/P90。<br><strong>部位：</strong> 股數同時受「資金×單筆風險 ÷ 停損距離」與「單股最大配置」限制，取較小者。<br><strong>新聞：</strong> 標題關鍵字情緒僅作弱權重訊號，不等同 NLP 財測。`;
-}
-async function run(){const raw=$('symbol').value.trim(),capital=Math.max(0,+$('capital').value||0),riskPct=clamp(+$('risk').value||1,.1,10),maxAlloc=clamp(+$('allocation').value||25,1,100);if(!raw)return;$('go').disabled=true;$('status').className='status';$('status').textContent='正在讀取兩年價格資料…';try{const data=await loadYahoo(raw);$('status').textContent=`已取得 ${data.symbol}，正在計算技術指標、台股估值與新聞…`;const code=(data.symbol.match(/^(\d{4,6})\./)||[])[1];const [twse,news]=await Promise.all([loadTwse(code||''),loadNews(data.symbol,data.meta?.shortName||'')]);const a=analyze(data,news,twse,capital,riskPct,maxAlloc);render(data,a,news,twse,capital,riskPct,maxAlloc);$('status').textContent=`完成：${data.symbol} · ${a.rows.length} 個交易日資料 · 最後更新 ${a.dates.at(-1).toLocaleDateString('zh-TW')}`;}catch(e){console.error(e);$('status').className='status error';$('status').textContent=`分析失敗：${e.message||e}。可能是代號錯誤、資料源限流或瀏覽器跨網域服務暫時無回應，請稍後重試。`;}finally{$('go').disabled=false}}
-$('form').addEventListener('submit',e=>{e.preventDefault();run()});
-</script>
+      <article class="panel full-panel">
+        <div class="panel-head"><div><span class="overline">SCENARIO ENGINE</span><h3>未來價格機率情境</h3></div><span class="pill subtle">3,000 次蒙地卡羅</span></div>
+        <div class="table-wrap"><table><thead><tr><th>期間</th><th>偏弱 P10</th><th>中位 P50</th><th>偏強 P90</th><th>高於現價機率</th><th>模型解讀</th></tr></thead><tbody id="forecastRows"></tbody></table></div>
+      </article>
+
+      <div class="grid two-col">
+        <article class="panel">
+          <div class="panel-head"><div><span class="overline">NEWS SENTIMENT</span><h3>近期新聞</h3></div><span id="newsScore" class="pill">—</span></div>
+          <div id="newsList" class="news"></div>
+        </article>
+        <article class="panel">
+          <div class="panel-head"><div><span class="overline">MODEL LOGIC</span><h3>模型怎麼判斷</h3></div></div>
+          <div id="methodText" class="method"></div>
+        </article>
+      </div>
+    </section>
+
+    <footer>資料分析工具，不構成投資招攬、保證獲利或個別化財務顧問服務。重大財報、政策、流動性與突發事件都可能使價格偏離模型；下單前請自行核對即時報價與重大訊息。</footer>
+  </main>
+  <script src="assets/app.js"></script>
+  <script>if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));}</script>
 </body>
 </html>
