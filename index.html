@@ -6,54 +6,89 @@
   <meta name="theme-color" content="#070b13" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="format-detection" content="telephone=no" />
   <title>Money³ AI 股票作戰室</title>
-  <meta name="description" content="輸入股票代號，自動整合行情、技術面、估值、台股法人籌碼、新聞情緒、風險部位與機率情境。" />
+  <meta name="description" content="輸入股票代號，自動整合行情、技術面、估值、法人籌碼、新聞情緒、風險部位與機率情境。" />
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="stylesheet" href="assets/styles.css" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" defer></script>
+  <script src="assets/app.js" defer></script>
 </head>
 <body>
-  <div class="noise"></div>
+  <div class="ambient"></div>
   <main class="shell">
     <header class="hero">
-      <div>
+      <div class="hero-copy">
         <div class="eyebrow">MONEY · MONEY · MONEY</div>
         <h1>AI 股票作戰室</h1>
-        <p>行情 × 技術 × 估值 × 法人籌碼 × 新聞 × 情境模擬 × 風險部位。輸出的是可驗證條件與機率，不是假裝精準知道未來。</p>
+        <p>行情 × 技術 × 估值 × 法人籌碼 × 新聞 × 情境模擬 × 風險部位。輸出條件、區間與機率，不把模型包裝成確定答案。</p>
       </div>
-      <div class="hero-badges">
-        <span>台股 / 美股</span><span>免 API Key</span><span>PWA</span>
-      </div>
+      <div class="hero-badges" aria-label="功能標籤"><span>台股 / 美股</span><span>多來源備援</span><span>PWA</span></div>
     </header>
 
-    <form id="form" class="control-panel">
-      <label class="field wide"><span>股票代號</span><input id="symbol" value="2330" placeholder="2330 / 2330.TW / AAPL / NVDA" autocomplete="off" /></label>
-      <label class="field"><span>可投資資金</span><input id="capital" type="number" min="0" step="1000" value="100000" /></label>
-      <label class="field"><span>單筆風險 %</span><input id="risk" type="number" min="0.1" max="10" step="0.1" value="1" /></label>
-      <label class="field"><span>單股配置上限 %</span><input id="allocation" type="number" min="1" max="100" step="1" value="25" /></label>
-      <button id="go" class="primary">開始掃描</button>
-    </form>
-    <div id="status" class="status">純數字代號會先嘗試台灣上市（.TW），再嘗試上櫃（.TWO）。</div>
+    <section class="command-card">
+      <form id="form" class="control-panel" novalidate>
+        <label class="field ticker-field"><span>股票代號</span><input id="symbol" value="2330" placeholder="2330 / 2330.TW / 6488.TWO / AAPL" autocomplete="off" autocapitalize="characters" /></label>
+        <label class="field"><span>可投資資金</span><input id="capital" inputmode="decimal" type="number" min="0" step="1000" value="100000" /></label>
+        <label class="field"><span>單筆風險 %</span><input id="risk" inputmode="decimal" type="number" min="0.1" max="10" step="0.1" value="1" /></label>
+        <label class="field"><span>單股配置上限 %</span><input id="allocation" inputmode="decimal" type="number" min="1" max="100" step="1" value="25" /></label>
+        <button id="go" class="primary" type="submit"><span class="btn-label">開始掃描</span><span class="spinner" aria-hidden="true"></span></button>
+      </form>
+      <div class="quick-row">
+        <span class="quick-label">快速</span>
+        <button type="button" class="ticker-chip" data-symbol="2330">2330 台積電</button>
+        <button type="button" class="ticker-chip" data-symbol="0050">0050</button>
+        <button type="button" class="ticker-chip" data-symbol="2317">2317 鴻海</button>
+        <button type="button" class="ticker-chip" data-symbol="AAPL">AAPL</button>
+        <button type="button" class="ticker-chip" data-symbol="NVDA">NVDA</button>
+        <div id="watchlistChips" class="watchlist-chips"></div>
+      </div>
+    </section>
+
+    <div id="scanProgress" class="scan-progress" hidden>
+      <div class="progress-track"><i id="progressBar"></i></div>
+      <div class="progress-copy"><b id="progressTitle">準備掃描</b><span id="progressDetail">—</span></div>
+    </div>
+
+    <div class="status-row">
+      <div id="status" class="status">輸入股票代號後開始。台股上市優先使用 TWSE 官方行情。</div>
+      <button id="retryBtn" class="ghost small" type="button" hidden>重新嘗試</button>
+    </div>
 
     <section id="dashboard" hidden>
+      <div class="result-head panel-soft">
+        <div>
+          <div class="result-symbol"><strong id="resultSymbol">—</strong><span id="resultName">—</span></div>
+          <div class="source-line"><span id="sourceBadge" class="source-badge">來源 —</span><span id="freshness">—</span><span id="coverageBadge">資料完整度 —</span></div>
+        </div>
+        <div class="result-actions">
+          <button id="saveBtn" class="ghost" type="button">☆ 加入觀察</button>
+          <button id="refreshBtn" class="ghost" type="button">↻ 更新</button>
+          <button id="shareBtn" class="ghost" type="button">分享</button>
+        </div>
+      </div>
+
       <div class="decision-grid">
         <article class="signal-card">
-          <div class="signal-orb" id="signalOrb"><span id="signalLight">●</span></div>
+          <div class="signal-orb" id="signalOrb"><span>●</span></div>
           <div><div class="label">今日決策燈號</div><h2 id="signalTitle">—</h2><p id="signalText">—</p></div>
         </article>
         <article class="stat-card"><span>綜合分數</span><strong id="scoreValue">—</strong><small id="scoreLabel">—</small></article>
         <article class="stat-card"><span>最新價格</span><strong id="price">—</strong><small id="change">—</small></article>
         <article class="stat-card"><span>模型最大部位</span><strong id="positionValue">—</strong><small id="positionShares">—</small></article>
         <article class="stat-card"><span>風險停損參考</span><strong id="stopValue">—</strong><small id="riskBudget">—</small></article>
+        <article class="stat-card"><span>模型信心</span><strong id="confidenceValue">—</strong><small id="confidenceText">—</small></article>
       </div>
+
+      <article id="riskNotice" class="risk-notice" hidden></article>
 
       <div class="grid main-grid">
         <article class="panel chart-panel">
           <div class="panel-head"><div><span class="overline">PRICE ACTION</span><h3 id="chartTitle">價格走勢</h3></div><div class="chips"><span>EMA20</span><span>EMA60</span><span>支撐 / 壓力</span></div></div>
-          <div class="chartbox"><canvas id="chart"></canvas></div>
+          <div class="chartbox"><canvas id="chart"></canvas><div id="chartFallback" class="chart-fallback" hidden>圖表元件目前無法載入，但分析數值仍可使用。</div></div>
         </article>
         <article class="panel score-panel">
-          <div class="panel-head"><div><span class="overline">MODEL SCORE</span><h3>多面向評分</h3></div></div>
+          <div class="panel-head"><div><span class="overline">MODEL SCORE</span><h3>多面向評分</h3></div><span id="factorCount" class="pill subtle">—</span></div>
           <div class="score-ring" id="scoreRing"><div><b id="ringNum">—</b><small>/100</small></div></div>
           <div id="factorBars" class="factor-bars"></div>
         </article>
@@ -61,14 +96,20 @@
 
       <div class="grid two-col">
         <article class="panel">
-          <div class="panel-head"><div><span class="overline">ENTRY PLAYBOOK</span><h3>最佳進場條件</h3></div><span id="timingBadge" class="pill">—</span></div>
+          <div class="panel-head"><div><span class="overline">ENTRY PLAYBOOK</span><h3>進場條件與區間</h3></div><span id="timingBadge" class="pill">—</span></div>
           <div class="callout"><h4 id="timingTitle">—</h4><p id="timingText">—</p></div>
+          <div class="entry-zone">
+            <div><span>主要觀察區</span><b id="entryZone">—</b></div>
+            <div><span>突破確認</span><b id="breakoutValue">—</b></div>
+            <div><span>失效條件</span><b id="invalidValue">—</b></div>
+          </div>
           <div id="buySteps" class="steps"></div>
         </article>
         <article class="panel">
           <div class="panel-head"><div><span class="overline">POSITION SIZING</span><h3>資金配置</h3></div></div>
           <div id="positionMetrics" class="mini-grid"></div>
           <div class="allocation"><div><span>建議使用資金</span><b id="allocAmount">—</b></div><div class="allocation-bar"><i id="allocBar"></i></div></div>
+          <div class="rr-grid"><div><span>1R</span><b id="oneR">—</b></div><div><span>2R 情境</span><b id="twoR">—</b></div><div><span>部位型態</span><b id="lotType">—</b></div></div>
         </article>
       </div>
 
@@ -87,6 +128,7 @@
 
       <article class="panel full-panel">
         <div class="panel-head"><div><span class="overline">SCENARIO ENGINE</span><h3>未來價格機率情境</h3></div><span class="pill subtle">3,000 次蒙地卡羅</span></div>
+        <div class="scenario-cards" id="scenarioCards"></div>
         <div class="table-wrap"><table><thead><tr><th>期間</th><th>偏弱 P10</th><th>中位 P50</th><th>偏強 P90</th><th>高於現價機率</th><th>模型解讀</th></tr></thead><tbody id="forecastRows"></tbody></table></div>
       </article>
 
@@ -102,9 +144,7 @@
       </div>
     </section>
 
-    <footer>資料分析工具，不構成投資招攬、保證獲利或個別化財務顧問服務。重大財報、政策、流動性與突發事件都可能使價格偏離模型；下單前請自行核對即時報價與重大訊息。</footer>
+    <footer>資料分析與風險管理工具，不構成投資招攬、保證獲利或個別化財務顧問服務。重大財報、政策、流動性與突發事件都可能使價格偏離模型；下單前請自行核對即時報價與重大訊息。</footer>
   </main>
-  <script src="assets/app.js"></script>
-  <script>if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));}</script>
 </body>
 </html>
