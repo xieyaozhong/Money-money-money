@@ -1,0 +1,32 @@
+[hidden]{display:none!important}
+
+.chart-upgrade-tools{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:-4px 0 12px;flex-wrap:wrap}
+.chart-range-group,.dt-range-group{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.chart-range-btn,.dt-range-btn{appearance:none;border:1px solid #263a5b;background:#09111e;color:#98abc9;border-radius:999px;padding:6px 10px;font-size:10px;font-weight:900;letter-spacing:.02em;cursor:pointer;transition:border-color .18s ease,background .18s ease,color .18s ease,transform .18s ease;min-height:30px}
+.chart-range-btn:hover,.dt-range-btn:hover{border-color:#4d6f9f;transform:translateY(-1px)}
+.chart-range-btn.active,.dt-range-btn.active{border-color:transparent;background:linear-gradient(135deg,#69a7ff,#54d6e8);color:#06101b;box-shadow:0 5px 18px rgba(84,214,232,.16)}
+.chart-range-note{font-size:10px;color:#6f83a2;display:flex;align-items:center;gap:6px}.chart-range-note:before{content:"";width:6px;height:6px;border-radius:50%;background:#4be5a4;box-shadow:0 0 10px rgba(75,229,164,.7)}
+
+.chart-panel .chartbox{height:390px;position:relative;overflow:hidden;border-radius:16px;background:linear-gradient(180deg,rgba(8,15,27,.55),rgba(5,10,18,.2))}
+.chart-panel canvas,.dt-chartbox canvas{touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.chart-fallback[hidden]{display:none!important}
+
+.dt-card-head{flex-wrap:wrap}
+.dt-range-group{margin-left:auto}
+.dt-chartbox{position:relative;overflow:hidden}
+
+@media(max-width:620px){
+  .chart-panel .panel-head{margin-bottom:8px}
+  .chart-upgrade-tools{margin:0 0 8px;gap:7px}
+  .chart-range-group{width:100%;display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
+  .chart-range-btn{padding:6px 4px;min-width:0;width:100%}
+  .chart-range-note{display:none}
+  .chart-panel .chartbox{height:310px;border-radius:13px}
+  .dt-range-group{width:100%;display:grid;grid-template-columns:repeat(3,1fr);margin-left:0;margin-top:6px}
+  .dt-range-btn{width:100%;padding:6px 4px}
+}
+
+@media(max-width:390px){
+  .chart-panel .chartbox{height:292px}
+  .chart-range-btn,.dt-range-btn{font-size:9px}
+}
